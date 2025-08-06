@@ -15,23 +15,29 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh; /* Ensure it takes full viewport height for centering */
-            background-color: #f8f8f8; /* Light background to match Notion */
+            min-height: 100vh;
+            background-color: #f8f8f8;
+            box-sizing: border-box; /* Ensure padding is included in sizing calculations */
         }
         .calendar-container {
-            width: 100%;
-            max-width: 320px; /* Small calendar view */
+            width: 95%; /* Use a percentage for fluid width */
+            max-width: 320px; /* Still cap the max width for larger screens */
+            min-width: 200px; /* Add a minimum width to prevent it from becoming too small */
             background-color: #ffffff;
             border-radius: 0.75rem; /* rounded-xl */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
             padding: 1rem;
             box-sizing: border-box; /* Include padding in width */
+            display: flex; /* Use flexbox for centering content inside */
+            flex-direction: column;
+            align-items: center;
         }
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 0.25rem; /* gap-1 */
             text-align: center;
+            width: 100%; /* Ensure the grid takes full width of its container */
         }
         .day-header {
             font-weight: 600; /* font-semibold */
@@ -56,6 +62,19 @@
         }
         .day-cell.other-month {
             color: #9ca3af; /* gray-400 */
+        }
+
+        /* Responsive adjustments for smaller screens */
+        @media (max-width: 320px) {
+            .calendar-container {
+                padding: 0.75rem; /* Slightly less padding on very small screens */
+            }
+            .day-header, .day-cell {
+                font-size: 0.7rem; /* Slightly smaller font size for days */
+            }
+            .text-lg { /* Adjust month/year header for smaller screens */
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -91,18 +110,18 @@
             const monthNames = ["January", "February", "March", "April", "May", "June",
                                 "July", "August", "September", "October", "November", "December"];
             const header = document.createElement('div');
-            header.className = 'text-center text-lg font-bold mb-4 text-gray-800';
+            header.className = 'text-center text-lg font-bold mb-4 text-gray-800'; // Tailwind classes
             header.textContent = `${monthNames[currentMonth]} ${currentYear}`;
             calendarEl.appendChild(header);
 
             // Days of the week headers
             const dayHeaders = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
             const gridContainer = document.createElement('div');
-            gridContainer.className = 'calendar-grid';
+            gridContainer.className = 'calendar-grid'; // Custom class for grid layout
 
             dayHeaders.forEach(day => {
                 const dayHeaderEl = document.createElement('div');
-                dayHeaderEl.className = 'day-header';
+                dayHeaderEl.className = 'day-header'; // Custom class for day headers
                 dayHeaderEl.textContent = day;
                 gridContainer.appendChild(dayHeaderEl);
             });
@@ -110,32 +129,28 @@
             // Fill in leading empty cells for days before the 1st
             for (let i = 0; i < startDayOfWeek; i++) {
                 const emptyCell = document.createElement('div');
-                emptyCell.className = 'day-cell other-month';
-                // Optionally show days from previous month
-                // emptyCell.textContent = lastDayOfPrevMonth - (startDayOfWeek - 1 - i);
+                emptyCell.className = 'day-cell other-month'; // Custom class for day cells
                 gridContainer.appendChild(emptyCell);
             }
 
             // Fill in days of the current month
             for (let day = 1; day <= daysInMonth; day++) {
                 const dayCell = document.createElement('div');
-                dayCell.className = 'day-cell';
+                dayCell.className = 'day-cell'; // Custom class for day cells
                 dayCell.textContent = day;
 
                 if (day === currentDay) {
-                    dayCell.classList.add('current-day');
+                    dayCell.classList.add('current-day'); // Custom class for current day
                 }
                 gridContainer.appendChild(dayCell);
             }
 
             // Fill in trailing empty cells for the rest of the week
             const totalCells = startDayOfWeek + daysInMonth;
-            const remainingCells = (7 - (totalCells % 7)) % 7; // Ensure it wraps correctly for full weeks
+            const remainingCells = (7 - (totalCells % 7)) % 7;
             for (let i = 0; i < remainingCells; i++) {
                 const emptyCell = document.createElement('div');
-                emptyCell.className = 'day-cell other-month';
-                // Optionally show days from next month
-                // emptyCell.textContent = i + 1;
+                emptyCell.className = 'day-cell other-month'; // Custom class for day cells
                 gridContainer.appendChild(emptyCell);
             }
 
@@ -145,7 +160,7 @@
         // Render the calendar when the window loads
         window.onload = renderCalendar;
 
-        // Optional: Re-render on window resize to ensure responsiveness (though Tailwind handles most of it)
+        // Re-render on window resize to ensure responsiveness
         window.addEventListener('resize', renderCalendar);
     </script>
 </body>
